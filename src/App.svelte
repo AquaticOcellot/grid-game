@@ -21,7 +21,7 @@
     appElement!.appendChild(app.view);
 
     main();
-    setInterval(() => {update()}, 10000);
+    //setInterval(() => {update()}, 10000);
 
     function main(): void{
         setupAssets();
@@ -73,7 +73,7 @@
         app.stage.addChild(spriteGrid);
     }
 
-    function update() {
+    export function update() {
         world.update();
         updateRender();
     }

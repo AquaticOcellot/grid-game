@@ -24,6 +24,7 @@ export class World {
             }
             gridDelta.push(rowDelta);
         }
+        console.log(gridDelta);
 
         for (let rowIndex = 0; rowIndex < this.cells.length; rowIndex++) {
             for (let cellIndex = 0; cellIndex < this.cells[rowIndex].length; cellIndex++) {
