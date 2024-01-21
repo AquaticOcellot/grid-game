@@ -1,6 +1,6 @@
 import {Cell} from "./cell";
 
-export class World {
+export default class World {
     cells: Cell[][];
     constructor(data: string[][]) {
         this.cells = [];
