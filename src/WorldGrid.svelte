@@ -27,12 +27,19 @@
         return PIXI.Assets.load(alias)
     }
 
-    async function createGrid(width: number, height: number, alias: string) {
+    export function update() {
+        world.update();
+        updateRender();
+    }
+
+    export async function createGrid(width: number, height: number, alias: string) {
         let scale = Math.min(
             (displayDimensions[0]) / (width * 256),
             (displayDimensions[1]) / (height * 256),
         );
-        console.log(scale);
+        if (app.stage.children[-1]) {
+            app.stage.children[-1].removeFromParent();
+        }
         let spriteGrid = new PIXI.Container();
         for (let rowIndex = 0; rowIndex < height; rowIndex++){
             let spriteRow = new PIXI.Container();
@@ -59,11 +66,6 @@
             spriteGrid.addChild(spriteRow);
         }
         app.stage.addChild(spriteGrid);
-    }
-
-    export function update() {
-        world.update();
-        updateRender();
     }
 
     function updateRender() {
