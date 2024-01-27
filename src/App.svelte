@@ -11,6 +11,8 @@
 
     app.stage.addChild(Slider([0, 600], [600, 50], [1, 40]))
     app.stage.addChild(Slider([0, 700], [800, 50], [1, 20]))
+    app.stage.eventMode = "static";
+    app.stage.hitArea = app.screen;
 
     let appElement = document.getElementById("app");
     appElement!.appendChild(app.view);

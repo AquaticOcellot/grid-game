@@ -16,12 +16,21 @@ export default ((coordinates: number[], dimensions: number[], valueRange: number
 
     let handle: Graphics = new Graphics()
         .beginFill(0x444444).drawRect(0, 0, handleWidth, dimensions[1]);
-    handle.pivot.set(0.5)
-    handle.eventMode = "static";
-    handle.on("pointerdown", () => {handle.addEventListener("pointermove", onDrag)});
-    handle.on("pointerup", () => {handle.removeEventListener("pointermove", onDrag)});
-    handle.on("pointerupoutside", () => {handle.removeEventListener("pointermove", onDrag)});
-    slider.addChild(handle);
+    handle.pivot.set(0.5);
+    body.eventMode = "static";
+    body.on("pointerdown", dragStart);
+    body.on("pointerup", dragEnd);
+    body.on("pointerupoutside", dragEnd);
+
+    slider.addChild(handle)
+
+    function dragStart(): void {
+        body.addEventListener("pointermove", onDrag);
+    }
+
+    function dragEnd(): void {
+        body.removeEventListener("pointermove", onDrag);
+    }
 
     function onDrag(e: any) {
         value = 0;
