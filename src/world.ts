@@ -2,7 +2,16 @@ import {Cell} from "./cell";
 
 export default class World {
     cells: Cell[][];
-    constructor(data: string[][]) {
+    width: number;
+    height: number;
+
+    constructor(data: string[][] = [
+        ["heat", "wall", "wall"],
+        ["wall", "    ", "wall"],
+        ["    ", "sink", "wall"],
+    ]) {
+        this.height = data.length
+        this.width = data[0].length;
         this.cells = [];
         data.forEach((dataRow) => {
             let cellRow:Cell[] = [];
