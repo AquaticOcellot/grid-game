@@ -41,7 +41,7 @@
     function setupAssets() {
         PIXI.Assets.add({
             alias: "metal",
-            src: "public/metal.png"
+            src: "metal.png"
         });
     }
 
