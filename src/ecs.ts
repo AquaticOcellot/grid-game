@@ -201,7 +201,7 @@ class DistributeHeat extends System {
 class Renderer extends System {
     componentsRequired = new Set<Function>([Coordinate, Heat, BoxSprite])
     container: Container;
-    constructor() {
+    constructor(gridDimensions: number[], displayDimensions: number[] = [1200, 600]) {
         super()
         this.container = new Container()
         setupAssets()
@@ -287,10 +287,7 @@ export function test(): void {
 }
 
 function setupAssets() {
-    PIXI.Assets.add({
-        alias: "metal",
-        src: "src/assets/metal.png"
-    });
+
 }
 
 function getAsset(alias:string) {
