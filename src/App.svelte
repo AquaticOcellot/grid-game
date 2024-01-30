@@ -1,9 +1,9 @@
 <script lang="ts">
-    import {Application} from "pixi.js";
-    import WorldGrid from "./WorldGrid";
+    import {Application, Container} from "pixi.js";
     import Slider from "./Slider";
     import World from "./world";
     import randomData from "./randomData";
+    import {createWorld, update, test} from "./ecs";
 
     const screenWidth = 1200;
     const screenHeight = 800;
@@ -11,7 +11,6 @@
     const app = new Application<HTMLCanvasElement>({width: screenWidth, height: screenHeight});
 
     let world: World;
-    let worldGrid: WorldGrid;
 
     let slider1 = {"value": 0};
     let slider2 = {"value": 0};
@@ -23,18 +22,23 @@
 
     //setInterval(() => {update()}, 10000);
 
-    function createWorld() {
-        if (worldGrid) {
-            worldGrid.spriteGrid.removeFromParent();
-        }
+    let worldGraphic: Container
+    function initialize() {
         world = new World(randomData([slider1.value, slider2.value]));
-        worldGrid = new WorldGrid(world, [screenWidth, screenHeight - 200], "metal")
-        app.stage.addChild(worldGrid.spriteGrid)
+
+        if (worldGraphic) {
+            worldGraphic.removeFromParent()
+        }
+        worldGraphic = createWorld(world, [screenWidth, screenHeight - 200])
+        app.stage.addChild(worldGraphic)
+        test()
     }
 </script>
 
 <div id="menu">
-    <button on:click={createWorld}>Generate</button>
+    <button on:click={initialize}>Generate</button>
+    <button on:click={update}>Update</button>
+    <button on:click={() => {setInterval(update, 100)}}>Auto Update</button>
 </div>
 
 <style>
