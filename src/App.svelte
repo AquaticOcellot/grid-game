@@ -27,6 +27,7 @@
     function initialize() {
         world = new World(randomData([slider1.value, slider2.value]));
 
+        setupAssets()
         if (worldGraphic) {
             worldGraphic.removeFromParent()
         }
