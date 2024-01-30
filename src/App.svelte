@@ -15,8 +15,8 @@
 
     let slider1 = {"value": 0};
     let slider2 = {"value": 0};
-    app.stage.addChild(Slider([0, 600], [600, 50], [1, 400], slider1))
-    app.stage.addChild(Slider([0, 700], [800, 50], [1, 200], slider2))
+    app.stage.addChild(Slider([0, 600], [600, 50], [1, 100], slider1))
+    app.stage.addChild(Slider([0, 700], [800, 50], [1, 50], slider2))
 
     let appElement = document.getElementById("app");
     appElement!.appendChild(app.view);
@@ -26,17 +26,26 @@
     let worldGraphic: Container
     function initialize() {
         world = new World(randomData([slider1.value, slider2.value]));
-        PIXI.Assets.add({
-            alias: "metal",
-            src: "src/assets/metal.png"
-        });
 
         if (worldGraphic) {
             worldGraphic.removeFromParent()
         }
-        worldGraphic = createWorld(world, [screenWidth, screenHeight - 200])
-        app.stage.addChild(worldGraphic)
-        test()
+        getAsset("metal").then((res) => {
+            worldGraphic = createWorld(world, [screenWidth, screenHeight - 200], res)
+            app.stage.addChild(worldGraphic)
+            test()
+        })
+    }
+
+    function setupAssets() {
+        PIXI.Assets.add({
+            alias: "metal",
+            src: "./assets/metal.png"
+        });
+    }
+
+    function getAsset(alias:string) {
+        return PIXI.Assets.load(alias)
     }
 </script>
 

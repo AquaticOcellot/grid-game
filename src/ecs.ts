@@ -1,6 +1,5 @@
 import type World from "./world";
-import * as PIXI from "pixi.js";
-import {Container, Sprite} from "pixi.js";
+import {Container, Sprite, type Texture} from "pixi.js";
 
 abstract class Component {}
 
@@ -157,15 +156,12 @@ class HeatChange extends Component {
 }
 class BoxSprite extends Component {
     public sprite!: Sprite
-    constructor(public scale: number, position: number[]) {
+    constructor(public scale: number, position: number[], texture: Texture) {
         super();
-        this.sprite = new Sprite()
-        getAsset("metal").then((res) => {
-            this.sprite.texture = res
-            this.sprite.scale.set(scale)
-            this.sprite.x = position[0]
-            this.sprite.y = position[1]
-        })
+        this.sprite = Sprite.from(texture)
+        this.sprite.scale.set(scale)
+        this.sprite.x = position[0]
+        this.sprite.y = position[1]
     }
 }
 
@@ -201,10 +197,9 @@ class DistributeHeat extends System {
 class Renderer extends System {
     componentsRequired = new Set<Function>([Coordinate, Heat, BoxSprite])
     container: Container;
-    constructor(gridDimensions: number[], displayDimensions: number[] = [1200, 600]) {
+    constructor() {
         super()
         this.container = new Container()
-        setupAssets()
     }
     update(entities: Set<number>) {
         for (const entity of entities) {
@@ -218,11 +213,11 @@ class Renderer extends System {
 let ecs = new ECS()
 
 
-export function createWorld(world: World, displayDimensions: number[]): Container {
+export function createWorld(world: World, displayDimensions: number[], texture: Texture): Container {
     ecs.clear()
     ecs.addSystem(new UpdateHeat())
     ecs.addSystem(new DistributeHeat())
-    let renderer = new Renderer([world.width, world.height])
+    let renderer = new Renderer()
     ecs.addSystem(renderer)
 
     let scale = Math.min(
@@ -240,7 +235,7 @@ export function createWorld(world: World, displayDimensions: number[]): Containe
                     let entity = ecs.addEntity()
                     let coordinate = new Coordinate(cellIndex, rowIndex)
                     let boxSprite = new BoxSprite(scale,
-                        [cellIndex * scale * 256, rowIndex * scale * 256])
+                        [cellIndex * scale * 256, rowIndex * scale * 256], texture)
                     ecs.addComponent(entity, coordinate)
                     ecs.addComponent(entity, boxSprite)
                     if (cellName == "wall") {
@@ -284,14 +279,6 @@ export function update(): void {
 
 export function test(): void {
     console.log(ecs)
-}
-
-function setupAssets() {
-
-}
-
-function getAsset(alias:string) {
-    return PIXI.Assets.load(alias)
 }
 
 function normalizeHexPart(part: number): string {
