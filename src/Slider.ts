@@ -2,7 +2,7 @@ import {Container, Graphics} from "pixi.js";
 
 export default ((coordinates: number[], dimensions: number[], valueRange: number[], link: {"value": number}) => {
     let valueDifference = valueRange[1] - valueRange[0];
-    link.value = Math.round((valueRange[0] + valueRange[1]) / 2);
+    link.value = Math.round((valueRange[0] + valueRange[1]) / 10);
     let handleWidth: number = 50;
     let minCoordinate: number = 0;
     let maxCoordinate: number = dimensions[0] - handleWidth;
