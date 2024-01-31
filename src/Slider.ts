@@ -18,7 +18,6 @@ export default ((coordinates: number[], dimensions: number[], valueRange: number
     let handle: Graphics = new Graphics()
         .beginFill(0x444444).drawRect(0, 0, handleWidth, dimensions[1]);
     slider.addChild(handle)
-    handle.pivot.set(0.5);
     handle.x = maxCoordinate * (link.value / (valueRange[0] + valueRange[1]));
 
     body.eventMode = "static";
@@ -40,6 +39,7 @@ export default ((coordinates: number[], dimensions: number[], valueRange: number
                 e.getLocalPosition(body).x - handleWidth / 2,
                 maxCoordinate),
             minCoordinate);
+        console.log(handle.x)
         link.value = Math.round(valueRange[0] + valueDifference * (handle.x / maxCoordinate));
     }
 
