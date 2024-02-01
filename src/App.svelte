@@ -1,32 +1,33 @@
 <script lang="ts">
-    import {Application, Container} from "pixi.js";
-    import Slider from "./Slider";
-    import World from "./world";
-    import randomData from "./randomData";
-    import {createWorld, update, test} from "./ecs";
-    import * as PIXI from "pixi.js";
+    import {Application, Container} from "pixi.js"
+    import World from "./world"
+    import randomData from "./randomData"
+    import {createWorld, update, test} from "./ecs"
+    import * as PIXI from "pixi.js"
+    import Menu from "./Menu";
 
-    const screenWidth = 1200;
-    const screenHeight = 800;
+    const screenWidth = 1200
+    const screenHeight = 800
 
-    const app = new Application<HTMLCanvasElement>({width: screenWidth, height: screenHeight});
+    const app = new Application<HTMLCanvasElement>({width: screenWidth, height: screenHeight})
 
-    let world: World;
-
-    let slider1 = {"value": 0};
-    let slider2 = {"value": 0};
-    app.stage.addChild(Slider([0, 600], [600, 50], [1, 100], slider1))
-    app.stage.addChild(Slider([0, 700], [800, 50], [1, 50], slider2))
+    let options = {
+        gridWidth: {value: 20},
+        gridHeight: {value: 10},
+        generateFunction: initialize,
+        manualUpdateFunction: update,
+        autoUpdate: {value: false},
+    }
+    let menu = Menu([100, 600], options)
+    app.stage.addChild(menu)
 
     let appElement = document.getElementById("app");
-    appElement!.appendChild(app.view);
-
-    //setInterval(() => {update()}, 10000);
+    appElement!.appendChild(app.view)
 
     let worldGraphic: Container
     setupAssets()
     function initialize() {
-        world = new World(randomData([slider1.value, slider2.value]));
+        let world = new World(randomData([options.gridWidth.value, options.gridHeight.value]))
 
         if (worldGraphic) {
             worldGraphic.removeFromParent()
@@ -37,6 +38,7 @@
             test()
         })
     }
+    setInterval(autoUpdate, 100)
 
     function setupAssets() {
         PIXI.Assets.add({
@@ -48,16 +50,14 @@
     function getAsset(alias:string) {
         return PIXI.Assets.load(alias)
     }
+
+    function autoUpdate() {
+        if (options.autoUpdate) {
+            update()
+        }
+    }
 </script>
 
-<div id="menu">
-    <button on:click={initialize}>Generate</button>
-    <button on:click={update}>Update</button>
-    <button on:click={() => {setInterval(update, 100)}}>Auto Update</button>
-</div>
-
 <style>
-    #menu {
-        display: flex;
-    }
+
 </style>

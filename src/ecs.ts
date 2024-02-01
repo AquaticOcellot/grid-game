@@ -1,12 +1,12 @@
-import type World from "./world";
-import {Container, Sprite, type Texture} from "pixi.js";
+import type World from "./world"
+import {Container, Sprite, type Texture} from "pixi.js"
 
 abstract class Component {}
 
 abstract class System {
     public abstract componentsRequired: Set<Function>
     public abstract update(entities: Set<number>): void
-    public ecs!: ECS;
+    public ecs!: ECS
 }
 type ComponentClass<T extends Component> = new (...args: any[]) => T
 
@@ -14,30 +14,30 @@ class ComponentContainer {
     private map = new Map<Function, Component>()
 
     public add(component: Component): void {
-        this.map.set(component.constructor, component);
+        this.map.set(component.constructor, component)
     }
 
     public get<T extends Component>(
         componentClass: ComponentClass<T>
     ): T {
-        return this.map.get(componentClass) as T;
+        return this.map.get(componentClass) as T
     }
 
     public has(componentClass: Function): boolean {
-        return this.map.has(componentClass);
+        return this.map.has(componentClass)
     }
 
     public hasAll(componentClasses: Iterable<Function>): boolean {
         for (let cls of componentClasses) {
             if (!this.map.has(cls)) {
-                return false;
+                return false
             }
         }
-        return true;
+        return true
     }
 
     public delete(componentClass: Function): void {
-        this.map.delete(componentClass);
+        this.map.delete(componentClass)
     }
 }
 
@@ -49,10 +49,10 @@ class ECS {
     private entitiesToDestroy = new Array<number>()
 
     public addEntity(): number {
-        let entity = this.nextEntityID;
-        this.nextEntityID++;
-        this.entities.set(entity, new ComponentContainer());
-        return entity;
+        let entity = this.nextEntityID
+        this.nextEntityID++
+        this.entities.set(entity, new ComponentContainer())
+        return entity
     }
     public removeEntity(entity: number): void {
         this.entitiesToDestroy.push(entity);
@@ -69,38 +69,38 @@ class ECS {
             this.destroyEntity(entity)
         }
         for (let system of this.systems.keys()) {
-            this.systems.delete(system);
+            this.systems.delete(system)
         }
         this.entitiesToDestroy = new Array<number>()
         this.nextEntityID = 0
     }
     public addComponent(entity: number, component: Component): void {
-        this.entities.get(entity)!.add(component);
-        this.checkE(entity);
+        this.entities.get(entity)!.add(component)
+        this.checkE(entity)
     }
 
     public getComponents(entity: number): ComponentContainer {
-        return this.entities.get(entity)!;
+        return this.entities.get(entity)!
     }
 
     public removeComponent(
         entity: number, componentClass: Function
     ): void {
-        this.entities.get(entity)!.delete(componentClass);
-        this.checkE(entity);
+        this.entities.get(entity)!.delete(componentClass)
+        this.checkE(entity)
     }
     public addSystem(system: System): void {
         if (system.componentsRequired.size == 0) {
-            console.warn("System not added: empty Components list.");
-            console.warn(system);
-            return;
+            console.warn("System not added: empty Components list.")
+            console.warn(system)
+            return
         }
 
-        system.ecs = this;
+        system.ecs = this
 
-        this.systems.set(system, new Set());
+        this.systems.set(system, new Set())
         for (let entity of this.entities.keys()) {
-            this.checkES(entity, system);
+            this.checkES(entity, system)
         }
     }
 
@@ -110,54 +110,54 @@ class ECS {
         }
 
         while (this.entitiesToDestroy.length > 0) {
-            this.destroyEntity(this.entitiesToDestroy.pop()!);
+            this.destroyEntity(this.entitiesToDestroy.pop()!)
         }
     }
 
     private destroyEntity(entity: number): void {
-        this.entities.delete(entity);
+        this.entities.delete(entity)
         for (let entities of this.systems.values()) {
-            entities.delete(entity);
+            entities.delete(entity)
         }
     }
 
     private checkE(entity: number): void {
         for (let system of this.systems.keys()) {
-            this.checkES(entity, system);
+            this.checkES(entity, system)
         }
     }
 
     private checkES(entity: number, system: System): void {
-        let have = this.entities.get(entity)!;
-        let need = system.componentsRequired;
+        let have = this.entities.get(entity)!
+        let need = system.componentsRequired
         if (have.hasAll(need)) {
-            this.systems.get(system)!.add(entity);
+            this.systems.get(system)!.add(entity)
         } else {
-            this.systems.get(system)!.delete(entity);
+            this.systems.get(system)!.delete(entity)
         }
     }
 }
 
 class Coordinate extends Component {
     constructor(public x: number, public y: number, public neighbors: number[] = []) {
-        super();
+        super()
     }
 }
 
 class Heat extends Component {
     constructor(public heat: number, public delta: number = 0) {
-        super();
+        super()
     }
 }
 class HeatChange extends Component {
     constructor(public ratio: number, public absolute: number) {
-        super();
+        super()
     }
 }
 class BoxSprite extends Component {
     public sprite!: Sprite
     constructor(public scale: number, position: number[], texture: Texture) {
-        super();
+        super()
         this.sprite = Sprite.from(texture)
         this.sprite.scale.set(scale)
         this.sprite.x = position[0]
@@ -196,7 +196,7 @@ class DistributeHeat extends System {
 }
 class Renderer extends System {
     componentsRequired = new Set<Function>([Coordinate, Heat, BoxSprite])
-    container: Container;
+    container: Container
     constructor() {
         super()
         this.container = new Container()
@@ -274,7 +274,7 @@ export function createWorld(world: World, displayDimensions: number[], texture: 
 }
 
 export function update(): void {
-    ecs.update();
+    ecs.update()
 }
 
 export function test(): void {
