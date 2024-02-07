@@ -5,11 +5,12 @@
     import {createWorld, update, test} from "./ecs"
     import * as PIXI from "pixi.js"
     import Menu from "./Menu";
+    import Sidebar from "./Sidebar";
 
-    const screenWidth = 1200
-    const screenHeight = 800
+    const screenWidth = 1600
+    const screenHeight = 900
 
-    const app = new Application<HTMLCanvasElement>({width: screenWidth, height: screenHeight})
+    const app = new Application<HTMLCanvasElement>({width: screenWidth, height: screenHeight, resizeTo: window})
 
     let options = {
         gridWidth: {value: 20},
@@ -18,14 +19,22 @@
         manualUpdateFunction: update,
         autoUpdate: {value: false},
     }
-    let menu = Menu([100, 600], options)
+    let menu = Menu([0, screenHeight - 200], options)
     app.stage.addChild(menu)
+
+    let sidebar = Sidebar([1300, 0])
+    app.stage.addChild(sidebar)
 
     let appElement = document.getElementById("app");
     appElement!.appendChild(app.view)
 
     let worldGraphic: Container
     setupAssets()
+
+    window.onresize = () => {
+        resize()
+    }
+
     function initialize() {
         let world = new World(randomData([options.gridWidth.value, options.gridHeight.value]))
 
@@ -33,12 +42,18 @@
             worldGraphic.removeFromParent()
         }
         getAsset("metal").then((res) => {
-            worldGraphic = createWorld(world, [screenWidth, screenHeight - 200], res)
+            worldGraphic = createWorld(world, [screenWidth - 300, screenHeight - 200], res)
             app.stage.addChild(worldGraphic)
             test()
         })
+        resize()
     }
     setInterval(autoUpdate, 100)
+
+    function resize(): void {
+        let scale = Math.min(app.view.width / screenWidth, app.view.height / screenHeight)
+        app.stage.scale.set(scale)
+    }
 
     function setupAssets() {
         PIXI.Assets.add({
@@ -52,7 +67,7 @@
     }
 
     function autoUpdate() {
-        if (options.autoUpdate) {
+        if (options.autoUpdate.value) {
             update()
         }
     }

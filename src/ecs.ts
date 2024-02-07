@@ -1,5 +1,5 @@
 import type World from "./world"
-import {Container, Sprite, type Texture} from "pixi.js"
+import {Container, Sprite, type Texture} from "pixi.js";
 
 abstract class Component {}
 
@@ -160,8 +160,7 @@ class BoxSprite extends Component {
         super()
         this.sprite = Sprite.from(texture)
         this.sprite.scale.set(scale)
-        this.sprite.x = position[0]
-        this.sprite.y = position[1]
+        this.sprite.position.set(position[0], position[1])
     }
 }
 

@@ -23,6 +23,7 @@ export default ((coordinates: number[], dimensions: number[], valueRange: number
     body.on("pointerdown", dragStart)
     body.on("pointerup", dragEnd)
     body.on("pointerupoutside", dragEnd)
+    body.on("pointertap", onDrag)
 
     function dragStart(): void {
         body.addEventListener("globalpointermove", onDrag)

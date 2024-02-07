@@ -28,6 +28,5 @@ export default ((coordinates: number[], options: any) : PIXI.Container => {
 
     background.beginFill(0x111111).drawRect(0, 0, container.width, container.height )
 
-
     return container
 })
